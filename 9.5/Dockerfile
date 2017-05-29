@@ -17,7 +17,7 @@ ENV POSTGRESQL_VERSION=9.5 \
     PGUSER=postgres \
     PG_NODOT=95 \
     POSTGIS_VERSION=2 \
-    NEED_TO_CREATE_POSTGIS=no
+    NEED_TO_CREATE_POSTGIS=yes
 
 LABEL io.k8s.description="PostgreSQL is an advanced Object-Relational database management system" \
       io.k8s.display-name="PostgreSQL 9.5" \

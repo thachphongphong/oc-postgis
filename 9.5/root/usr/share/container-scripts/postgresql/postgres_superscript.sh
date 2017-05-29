@@ -1,9 +1,9 @@
 # Set default postgres admin user
 PG_ADMIN_USER="postgres"
 PSQL=/usr/pgsql-9.5/bin/psql
-PG_ADMIN_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD}
-USER={POSTGRESQL_USER}
-DB_NAME={POSTGRESQL_DATABASE}
+PG_ADMIN_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD:-""}
+USER=${POSTGRESQL_USER}
+DB_NAME=${POSTGRESQL_DATABASE}
 
 # Define the default postgres connection string
 set_connection_string () {
