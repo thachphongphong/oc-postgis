@@ -44,8 +44,8 @@ RUN yum -y install epel-release  && \
     /usr/libexec/fix-permissions /var/run/postgresql
 
 # Get prefix path and path to scripts rather than hard-code them in scripts
-ENV CONTAINER_SCRIPTS_PATH=/usr/share/container-scripts/postgresql \
-    ENABLED_COLLECTIONS=rh-postgresql95
+ENV PATH=/usr/pgsql-9.5/bin:$PATH
+ENV CONTAINER_SCRIPTS_PATH=/usr/share/container-scripts/postgresql
 
 ADD root /
 
