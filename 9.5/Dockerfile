@@ -31,8 +31,7 @@ ADD root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
 # safe in the future. This should *never* change, the last test is there
 # to make sure of that.
 RUN yum -y install epel-release  && \
-    curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-centos${PG_NODOT}-${POSTGRESQL_VERSION}-2.noarch.rpm && \
-    yum localinstall -y pgdg.rpm && \
+    rpm -ivh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm && \
     INSTALL_PKGS="rsync tar gettext bind-utils nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
