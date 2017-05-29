@@ -40,7 +40,7 @@ install_extensions () {
   $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO role_${DB_NAME}_rw;";
   $PSQL -c "GRANT ALL ON SCHEMA $SCHEMA TO postgres;";
   $PSQL -c "CREATE EXTENSION IF NOT EXISTS postgis;";
-  $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO $USER;
+  $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO $USER;";
 #  $PSQL -c "CREATE EXTENSION IF NOT EXISTS sslinfo;";
 #  $PSQL -c "CREATE EXTENSION IF NOT EXISTS hstore;";
 #  $PSQL -c "CREATE EXTENSION IF NOT EXISTS uuid-ossp;";
@@ -103,7 +103,7 @@ grant_role_to_user() {
 drop_database() {
   echo "Dropping database $DB_NAME on rds instance $PG_HOST"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
-    -c "SELECT pg_terminate_backend\(pid\) from pg_stat_activity where datname='${DB_NAME}';"
+    -c "SELECT pg_terminate_backend(pid) from pg_stat_activity where datname='${DB_NAME}';"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "DROP DATABASE ${DB_NAME}"
 }
@@ -135,25 +135,25 @@ list_users() {
 # also do preliminary checks on the database in question
 check_opt_db() {
   if [ -z $DB_NAME ] ; then
-    echo "DB Name not SET - exiting"
+    echo "DB Name not set - exiting"
     exit 1
   fi
 }
 check_opt_schema() {
   if [ -z $SCHEMA ] ; then
-    echo "Schema name not SET - exiting"
+    echo "Schema name not set - exiting"
     exit 1
   fi
 }
 check_opt_user() {
   if [ -z $USER ] ; then
-    echo "User name not SET - exiting"
+    echo "User name not set - exiting"
     exit 1
   fi
 }
 check_opt_role() {
   if [ -z $ROLE ] ; then
-    echo "Role name not SET - exiting"
+    echo "Role name not set - exiting"
     exit 1
   fi
 }
