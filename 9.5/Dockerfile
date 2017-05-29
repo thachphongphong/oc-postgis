@@ -30,14 +30,13 @@ ADD root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
 # This image must forever use UID 26 for postgres user so our volumes are
 # safe in the future. This should *never* change, the last test is there
 # to make sure of that.
-RUN yum install -y centos-release-scl-rh && \
-    INSTALL_PKGS="rsync tar gettext bind-utils rh-postgresql95 rh-postgresql95-postgresql-contrib nss_wrapper" && \
-    yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
-    rpm -V $INSTALL_PKGS && \
+RUN yum install -y centos-release && \
     curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-centos${PG_NODOT}-${POSTGRESQL_VERSION}-2.noarch.rpm && \
     yum localinstall -y pgdg.rpm && \
-    yum upgrade -y && \
-    yum install -y postgis${POSTGIS_VERSION}_${PG_NODOT} \
+    INSTALL_PKGS="rsync tar gettext bind-utils nss_wrapper" && \
+    yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+    rpm -V $INSTALL_PKGS && \
+    yum install -y postgresql${PG_NODOT}-server postgresql${PG_NODOT}-postgresql-contrib postgis${POSTGIS_VERSION}_${PG_NODOT} \ 
     yum clean all && \
     localedef -f UTF-8 -i en_US en_US.UTF-8 && \
     test "$(id postgres)" = "uid=26(postgres) gid=26(postgres) groups=26(postgres)" && \
