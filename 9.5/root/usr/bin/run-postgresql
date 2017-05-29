@@ -15,7 +15,6 @@ generate_postgresql_config
 if [ ! -f "$PGDATA/postgresql.conf" ]; then
   initialize_database
   NEED_TO_CREATE_USERS=yes
-  NEED_TO_CREATE_POSTGIS=yes
 fi
 
 pg_ctl -w start -o "-h ''"
@@ -23,6 +22,7 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
   create_users
 fi
 
+NEED_TO_CREATE_POSTGIS=yes
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
   install_extensions
 fi

@@ -220,5 +220,6 @@ function wait_for_postgresql_master() {
 }
 
 install_extensions () {
+  echo "Install postgis ..."
   psql -c "CREATE EXTENSION IF NOT EXISTS postgis;";
 }
