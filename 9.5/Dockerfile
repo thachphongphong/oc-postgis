@@ -21,7 +21,7 @@ ENV POSTGRESQL_VERSION=9.5 \
 LABEL io.k8s.description="PostgreSQL is an advanced Object-Relational database management system" \
       io.k8s.display-name="PostgreSQL 9.5" \
       io.openshift.expose-services="5432:postgresql" \
-      io.openshift.tags="database,postgresql,postgresql95,rh-postgresql95"
+      io.openshift.tags="database,postgresql,postgresql95,axon-postgresql95"
 
 EXPOSE 5432
 
@@ -35,7 +35,7 @@ RUN yum -y install epel-release  && \
     INSTALL_PKGS="rsync tar gettext bind-utils nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    yum install -y postgresql${PG_NODOT}-server postgresql${PG_NODOT}-postgresql-contrib postgis${POSTGIS_VERSION}_${PG_NODOT} && \ 
+    yum install -y postgresql${PG_NODOT}-server postgresql${PG_NODOT}-contrib postgis${POSTGIS_VERSION}_${PG_NODOT} && \ 
     yum clean all && \
     localedef -f UTF-8 -i en_US en_US.UTF-8 && \
     test "$(id postgres)" = "uid=26(postgres) gid=26(postgres) groups=26(postgres)" && \
