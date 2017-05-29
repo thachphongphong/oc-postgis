@@ -35,6 +35,9 @@ RUN yum install -y centos-release-scl-rh && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-redhat${PG_NODOT}-${PG_VERSION}-1.noarch.rpm && \
+    yum localinstall -y pgdg.rpm && \
+    yum upgrade -y && \
+    yum install -y postgis${POSTGIS_VERSION}_${PG_NODOT} \
     yum clean all && \
     localedef -f UTF-8 -i en_US en_US.UTF-8 && \
     test "$(id postgres)" = "uid=26(postgres) gid=26(postgres) groups=26(postgres)" && \
