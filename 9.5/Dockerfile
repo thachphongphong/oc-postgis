@@ -31,10 +31,10 @@ ADD root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
 # safe in the future. This should *never* change, the last test is there
 # to make sure of that.
 RUN yum install -y centos-release-scl-rh && \
-    INSTALL_PKGS="rsync tar gettext bind-utils rh-postgresql95 rh-postgresql95-postgresql-contrib nss_wrapper" && \
+    INSTALL_PKGS="rsync tar gettext bind-utils postgresql95 postgresql95-server postgresql95-contrib nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-redhat${PG_NODOT}-${PG_VERSION}-1.noarch.rpm && \
+    curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-centos95${PG_NODOT}-${POSTGRESQL_VERSION}-2.noarch.rpm && \
     yum localinstall -y pgdg.rpm && \
     yum upgrade -y && \
     yum install -y postgis${POSTGIS_VERSION}_${PG_NODOT} \
