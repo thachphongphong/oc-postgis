@@ -34,7 +34,7 @@ RUN yum install -y centos-release-scl-rh && \
     INSTALL_PKGS="rsync tar gettext bind-utils rh-postgresql95 rh-postgresql95-postgresql-contrib nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-centos95${PG_NODOT}-${POSTGRESQL_VERSION}-2.noarch.rpm && \
+    curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-centos${PG_NODOT}-${POSTGRESQL_VERSION}-2.noarch.rpm && \
     yum localinstall -y pgdg.rpm && \
     yum upgrade -y && \
     yum install -y postgis${POSTGIS_VERSION}_${PG_NODOT} \
