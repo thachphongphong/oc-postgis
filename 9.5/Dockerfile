@@ -30,7 +30,7 @@ ADD root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
 # This image must forever use UID 26 for postgres user so our volumes are
 # safe in the future. This should *never* change, the last test is there
 # to make sure of that.
-RUN yum install -y centos-release && \
+RUN yum -y install epel-release  && \
     curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-centos${PG_NODOT}-${POSTGRESQL_VERSION}-2.noarch.rpm && \
     yum localinstall -y pgdg.rpm && \
     INSTALL_PKGS="rsync tar gettext bind-utils nss_wrapper" && \
