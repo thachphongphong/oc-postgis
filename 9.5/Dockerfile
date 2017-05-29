@@ -14,7 +14,9 @@ MAINTAINER SoftwareCollections.org <sclorg@redhat.com>
 
 ENV POSTGRESQL_VERSION=9.5 \
     HOME=/var/lib/pgsql \
-    PGUSER=postgres
+    PGUSER=postgres \
+    PG_NODOT=95 \
+    POSTGIS_VERSION=2
 
 LABEL io.k8s.description="PostgreSQL is an advanced Object-Relational database management system" \
       io.k8s.display-name="PostgreSQL 9.5" \
@@ -32,6 +34,7 @@ RUN yum install -y centos-release-scl-rh && \
     INSTALL_PKGS="rsync tar gettext bind-utils rh-postgresql95 rh-postgresql95-postgresql-contrib nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
+    curl -o pgdg.rpm http://yum.postgresql.org/${POSTGRESQL_VERSION}/redhat/rhel-7-x86_64/pgdg-redhat${PG_NODOT}-${PG_VERSION}-1.noarch.rpm && \
     yum clean all && \
     localedef -f UTF-8 -i en_US en_US.UTF-8 && \
     test "$(id postgres)" = "uid=26(postgres) gid=26(postgres) groups=26(postgres)" && \
