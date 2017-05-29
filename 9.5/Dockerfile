@@ -36,7 +36,7 @@ RUN yum install -y centos-release && \
     INSTALL_PKGS="rsync tar gettext bind-utils nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    yum install -y postgresql${PG_NODOT}-server postgresql${PG_NODOT}-postgresql-contrib postgis${POSTGIS_VERSION}_${PG_NODOT} \ 
+    yum install -y postgresql${PG_NODOT}-server postgresql${PG_NODOT}-postgresql-contrib postgis${POSTGIS_VERSION}_${PG_NODOT} && \ 
     yum clean all && \
     localedef -f UTF-8 -i en_US en_US.UTF-8 && \
     test "$(id postgres)" = "uid=26(postgres) gid=26(postgres) groups=26(postgres)" && \
