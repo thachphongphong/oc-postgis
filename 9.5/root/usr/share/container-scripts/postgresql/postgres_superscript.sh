@@ -103,10 +103,11 @@ grant_role_to_user() {
 drop_database() {
   echo "Dropping database $DB_NAME on rds instance $PG_HOST"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
-    -c "select pg_terminate_backend(pid) from pg_stat_activity where datname='${DB_NAME}';"
+    -c "SELECT pg_terminate_backend\(pid\) from pg_stat_activity where datname='${DB_NAME}';"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "DROP DATABASE ${DB_NAME}"
 }
+
 drop_role() {
   echo "Dropping role $ROLE on rds instance $PG_HOST"
   $PSQL -c "DROP ROLE ${ROLE}"
@@ -123,7 +124,7 @@ list_databases() {
 }
 list_schemas() {
   echo "Listing schemas on database $DB_NAME"
-  $PSQL -c "select nspname from pg_catalog.pg_namespace;"
+  $PSQL -c "SELECT nspname from pg_catalog.pg_namespace;"
 }
 list_users() {
   echo "Listing user definitions on rds instance $PG_HOST"
@@ -134,25 +135,25 @@ list_users() {
 # also do preliminary checks on the database in question
 check_opt_db() {
   if [ -z $DB_NAME ] ; then
-    echo "DB Name not set - exiting"
+    echo "DB Name not SET - exiting"
     exit 1
   fi
 }
 check_opt_schema() {
   if [ -z $SCHEMA ] ; then
-    echo "Schema name not set - exiting"
+    echo "Schema name not SET - exiting"
     exit 1
   fi
 }
 check_opt_user() {
   if [ -z $USER ] ; then
-    echo "User name not set - exiting"
+    echo "User name not SET - exiting"
     exit 1
   fi
 }
 check_opt_role() {
   if [ -z $ROLE ] ; then
-    echo "Role name not set - exiting"
+    echo "Role name not SET - exiting"
     exit 1
   fi
 }
