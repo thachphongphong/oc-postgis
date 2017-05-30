@@ -13,7 +13,7 @@ function set_connection_string () {
 # We create a standard database in a RDS instance and schemas within that
 # database per app.
 function create_database () {
-  echo "admin: ${PG_ADMIN_USER} - pass: ${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}"
+  echo "/usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres"
   echo "Creating database ${POSTGRESQL_DATABASE}"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "CREATE DATABASE ${POSTGRESQL_DATABASE} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
