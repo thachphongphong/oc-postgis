@@ -24,6 +24,11 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
 
 fi
 
+set_passwords
+pg_ctl stop
+
+unset_env_vars
+
 source "${CONTAINER_SCRIPTS_PATH}/postgres_superscript.sh"
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	
@@ -63,8 +68,4 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	fi 		
 fi
 
-set_passwords
-pg_ctl stop
-
-unset_env_vars
 exec postgres "$@"
