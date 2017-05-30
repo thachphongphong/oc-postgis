@@ -26,6 +26,7 @@ fi
 
 
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
+	DB_NAME=${POSTGRESQL_DATABASE}
 	if check_opt_db $1; then
   		create_database
   	fi
