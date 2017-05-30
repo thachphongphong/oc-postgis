@@ -6,14 +6,14 @@ USER=${POSTGRESQL_USER}
 DB_NAME=${POSTGRESQL_DATABASE}
 
 # Define the default postgres connection string
-set_connection_string () {
+function set_connection_string () {
   PSQL="/usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/${DB_NAME}"
 } 
 
 # Database and schema management functions.
 # We create a standard database in a RDS instance and schemas within that
 # database per app.
-create_database () {
+function create_database () {
   echo "Creating database ${DB_NAME}"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "CREATE DATABASE ${DB_NAME} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
@@ -28,12 +28,12 @@ create_database () {
   $PSQL -c "ALTER DEFAULT PRIVILEGES REVOKE USAGE ON TYPES FROM public;"
 }
 
-create_schema () {
+function create_schema () {
   echo "Creating schema $SCHEMA"
   $PSQL -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA};"
 }
 
-install_extensions () {
+function install_extensions () {
   echo "Installing extensions to the $SCHEMA schema"
   $PSQL -c "REVOKE ALL ON SCHEMA $SCHEMA FROM public;";
   $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO role_${DB_NAME}_ro;";
@@ -51,7 +51,7 @@ install_extensions () {
 
 # Role statements - we have rw and ro roles on databases and on schemas. We then create users and assign
 # them to these roles. The following functions create the respective high level roles.
-create_ro_database_role () {
+function create_ro_database_role () {
   echo "Creating read-only database role role_${DB_NAME}_ro"
   $PSQL -c "CREATE ROLE role_${DB_NAME}_ro NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
   $PSQL -c "GRANT CONNECT, TEMPORARY ON DATABASE ${DB_NAME} TO role_${DB_NAME}_ro;"
@@ -59,7 +59,7 @@ create_ro_database_role () {
   $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO role_${DB_NAME}_ro;"
 }
 
-create_rw_database_role () {
+function create_rw_database_role () {
   echo "Creating read-write database role role_${DB_NAME}_rw"
   $PSQL -c "CREATE ROLE role_${DB_NAME}_rw NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;" 
   $PSQL -c "GRANT CONNECT, TEMPORARY ON DATABASE ${DB_NAME} TO role_${DB_NAME}_rw;"
@@ -69,7 +69,7 @@ create_rw_database_role () {
   $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT USAGE ON TYPES TO role_${DB_NAME}_rw;"
 }
 
-create_ro_schema_role () {
+function create_ro_schema_role () {
   echo "Creating read-only role role_${SCHEMA}_ro for schema ${SCHEMA}"
   $PSQL -c "CREATE ROLE role_${SCHEMA}_ro NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
   $PSQL -c "GRANT CONNECT on DATABASE ${DB_NAME} TO role_${SCHEMA}_ro;"
@@ -78,7 +78,7 @@ create_ro_schema_role () {
   $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO role_${SCHEMA}_ro;"
 }
 
-create_rw_schema_role () {
+function create_rw_schema_role () {
   echo "Creating read-write role role_${SCHEMA}_rw for schema ${SCHEMA}"
   $PSQL -c "CREATE ROLE role_${SCHEMA}_rw NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
   $PSQL -c "GRANT CONNECT on DATABASE ${DB_NAME} TO role_${SCHEMA}_rw;"
@@ -88,19 +88,19 @@ create_rw_schema_role () {
   $PSQL -c "GRANT USAGE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;" 
 }
 
-create_user() {
+function create_user() {
   echo "Creating user $USER"
   $PSQL -c "CREATE ROLE ${USER} LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
   $PSQL -c "ALTER ROLE ${USER} WITH PASSWORD '${USER_PASSWORD}';"
 }
 
-grant_role_to_user() {
+function grant_role_to_user() {
   echo "Granting role $ROLE to user $USER"
   $PSQL -c "GRANT $ROLE TO ${USER};"
 }
 
 # Drop functions - simple functions to help clean up
-drop_database() {
+function drop_database() {
   echo "Dropping database $DB_NAME on rds instance $PG_HOST"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${PG_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "SELECT pg_terminate_backend(pid) from pg_stat_activity where datname='${DB_NAME}';"
@@ -108,50 +108,50 @@ drop_database() {
     -c "DROP DATABASE ${DB_NAME}"
 }
 
-drop_role() {
+function drop_role() {
   echo "Dropping role $ROLE on rds instance $PG_HOST"
   $PSQL -c "DROP ROLE ${ROLE}"
 }
-drop_schema() {
+function drop_schema() {
   echo "Dropping schema $SCHEMA from database $DB_NAME on rds instance $PG_HOST"
   $PSQL -c "DROP SCHEMA ${SCHEMA}"
 }
   
 # Database status functions - things like determining which schemas and users are in place
-list_databases() {
+function list_databases() {
   echo "Listing databases on rds instance $PG_HOST"
   $PSQL -l
 }
-list_schemas() {
+function list_schemas() {
   echo "Listing schemas on database $DB_NAME"
   $PSQL -c "SELECT nspname from pg_catalog.pg_namespace;"
 }
-list_users() {
+function list_users() {
   echo "Listing user definitions on rds instance $PG_HOST"
   $PSQL -c '\du'
 }
 
 # The following functions will be expanded to not only check variables but
 # also do preliminary checks on the database in question
-check_opt_db() {
+function check_opt_db() {
   if [ -z $DB_NAME ] ; then
     echo "DB Name not set - exiting"
     exit 1
   fi
 }
-check_opt_schema() {
+function check_opt_schema() {
   if [ -z $SCHEMA ] ; then
     echo "Schema name not set - exiting"
     exit 1
   fi
 }
-check_opt_user() {
+function check_opt_user() {
   if [ -z $USER ] ; then
     echo "User name not set - exiting"
     exit 1
   fi
 }
-check_opt_role() {
+function check_opt_role() {
   if [ -z $ROLE ] ; then
     echo "Role name not set - exiting"
     exit 1
