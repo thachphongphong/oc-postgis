@@ -39,7 +39,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	fi
 
 	SCHEMA=${POSTGRESQL_USER}
-	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = '${SCHEMA}'];
+	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = '${SCHEMA}']
 	then
 		 echo "Schema already exists"
 	else
@@ -52,7 +52,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	fi 	
 
 	SCHEMA="extensions"
-	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = '${SCHEMA}'];
+	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = '${SCHEMA}']
 	then
 		 echo "Schema already exists"
 	else
