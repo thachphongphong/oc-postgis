@@ -1,5 +1,6 @@
 PSQL=/usr/pgsql-9.5/bin/psql
 PG_HOST=${PG_HOST:-localhost}
+PG_ADMIN_USER="postgres"
 
 # Configuration settings.
 export POSTGRESQL_MAX_CONNECTIONS=${POSTGRESQL_MAX_CONNECTIONS:-100}
