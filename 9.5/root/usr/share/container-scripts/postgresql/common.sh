@@ -1,4 +1,3 @@
-PSQL=/usr/pgsql-9.5/bin/psql
 PG_HOST=${PG_HOST:-localhost}
 PG_ADMIN_USER="postgres"
 
@@ -42,11 +41,11 @@ function usage() {
 
   cat >&2 <<EOF
 You must either specify the following environment variables:
-  POSTGRESQL_USER (regex: '$psql_identifier_regex')
-  POSTGRESQL_PASSWORD (regex: '$psql_password_regex')
-  POSTGRESQL_DATABASE (regex: '$psql_identifier_regex')
+  POSTGRESQL_USER (regex: 'psql_identifier_regex')
+  POSTGRESQL_PASSWORD (regex: 'psql_password_regex')
+  POSTGRESQL_DATABASE (regex: 'psql_identifier_regex')
 Or the following environment variable:
-  POSTGRESQL_ADMIN_PASSWORD (regex: '$psql_password_regex')
+  POSTGRESQL_ADMIN_PASSWORD (regex: 'psql_password_regex')
 Or both.
 Optional settings:
   POSTGRESQL_MAX_CONNECTIONS (default: 100)
@@ -63,16 +62,16 @@ function check_env_vars() {
   if [[ -v POSTGRESQL_USER || -v POSTGRESQL_PASSWORD || -v POSTGRESQL_DATABASE ]]; then
     # one var means all three must be specified
     [[ -v POSTGRESQL_USER && -v POSTGRESQL_PASSWORD && -v POSTGRESQL_DATABASE ]] || usage
-    [[ "$POSTGRESQL_USER"     =~ $psql_identifier_regex ]] || usage
-    [[ "$POSTGRESQL_PASSWORD" =~ $psql_password_regex   ]] || usage
-    [[ "$POSTGRESQL_DATABASE" =~ $psql_identifier_regex ]] || usage
+    [[ "$POSTGRESQL_USER"     =~ psql_identifier_regex ]] || usage
+    [[ "$POSTGRESQL_PASSWORD" =~ psql_password_regex   ]] || usage
+    [[ "$POSTGRESQL_DATABASE" =~ psql_identifier_regex ]] || usage
     [ ${#POSTGRESQL_USER}     -le 63 ] || usage "PostgreSQL username too long (maximum 63 characters)"
     [ ${#POSTGRESQL_DATABASE} -le 63 ] || usage "Database name too long (maximum 63 characters)"
     postinitdb_actions+=",simple_db"
   fi
 
   if [ -v POSTGRESQL_ADMIN_PASSWORD ]; then
-    [[ "$POSTGRESQL_ADMIN_PASSWORD" =~ $psql_password_regex ]] || usage
+    [[ "$POSTGRESQL_ADMIN_PASSWORD" =~ psql_password_regex ]] || usage
     postinitdb_actions+=",admin_pass"
   fi
 
@@ -236,34 +235,34 @@ function create_database () {
   echo "Creating database ${POSTGRESQL_DATABASE}"
   /usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "CREATE DATABASE ${POSTGRESQL_DATABASE} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
-  $PSQL -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
-  $PSQL -c "GRANT ALL ON DATABASE ${POSTGRESQL_DATABASE} TO ${PG_ADMIN_USER};"
-  $PSQL -c "REVOKE ALL ON DATABASE ${POSTGRESQL_DATABASE} FROM public;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT, UPDATE, USAGE ON SEQUENCES TO ${PG_ADMIN_USER};"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON TABLES TO ${PG_ADMIN_USER};"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO ${PG_ADMIN_USER};"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT USAGE ON TYPES TO ${PG_ADMIN_USER};"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM public;" 
-  $PSQL -c "ALTER DEFAULT PRIVILEGES REVOKE USAGE ON TYPES FROM public;"
+  psql -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
+  psql -c "GRANT ALL ON DATABASE ${POSTGRESQL_DATABASE} TO ${PG_ADMIN_USER};"
+  psql -c "REVOKE ALL ON DATABASE ${POSTGRESQL_DATABASE} FROM public;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT SELECT, UPDATE, USAGE ON SEQUENCES TO ${PG_ADMIN_USER};"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON TABLES TO ${PG_ADMIN_USER};"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO ${PG_ADMIN_USER};"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT USAGE ON TYPES TO ${PG_ADMIN_USER};"
+  psql -c "ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM public;" 
+  psql -c "ALTER DEFAULT PRIVILEGES REVOKE USAGE ON TYPES FROM public;"
 }
 
 function create_schema () {
   echo "Creating schema $SCHEMA"
-  $PSQL -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA};"
+  psql -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA};"
 }
 
 function install_extensions () {
   echo "Installing extensions to the $SCHEMA schema"
-  $PSQL -c "REVOKE ALL ON SCHEMA $SCHEMA FROM public;";
-  $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO role_${POSTGRESQL_DATABASE}_ro;";
-  $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO role_${POSTGRESQL_DATABASE}_rw;";
-  $PSQL -c "GRANT ALL ON SCHEMA $SCHEMA TO postgres;";
-  $PSQL -c "CREATE EXTENSION IF NOT EXISTS postgis;";
-  $PSQL -c "GRANT USAGE ON SCHEMA $SCHEMA TO $POSTGRESQL_USER;";
-#  $PSQL -c "CREATE EXTENSION IF NOT EXISTS sslinfo;";
-#  $PSQL -c "CREATE EXTENSION IF NOT EXISTS hstore;";
-#  $PSQL -c "CREATE EXTENSION IF NOT EXISTS uuid-ossp;";
-#  $PSQL -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;";
+  psql -c "REVOKE ALL ON SCHEMA $SCHEMA FROM public;";
+  psql -c "GRANT USAGE ON SCHEMA $SCHEMA TO role_${POSTGRESQL_DATABASE}_ro;";
+  psql -c "GRANT USAGE ON SCHEMA $SCHEMA TO role_${POSTGRESQL_DATABASE}_rw;";
+  psql -c "GRANT ALL ON SCHEMA $SCHEMA TO postgres;";
+  psql -c "CREATE EXTENSION IF NOT EXISTS postgis;";
+  psql -c "GRANT USAGE ON SCHEMA $SCHEMA TO $POSTGRESQL_USER;";
+#  psql -c "CREATE EXTENSION IF NOT EXISTS sslinfo;";
+#  psql -c "CREATE EXTENSION IF NOT EXISTS hstore;";
+#  psql -c "CREATE EXTENSION IF NOT EXISTS uuid-ossp;";
+#  psql -c "CREATE EXTENSION IF NOT EXISTS pgcrypto;";
 
 }
 
@@ -272,65 +271,65 @@ function install_extensions () {
 # them to these roles. The following functions create the respective high level roles.
 function create_ro_database_role () {
   echo "Creating read-only database role role_${POSTGRESQL_DATABASE}_ro"
-  $PSQL -c "CREATE ROLE role_${POSTGRESQL_DATABASE}_ro NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
-  $PSQL -c "GRANT CONNECT, TEMPORARY ON DATABASE ${POSTGRESQL_DATABASE} TO role_${POSTGRESQL_DATABASE}_ro;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO role_${POSTGRESQL_DATABASE}_ro;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO role_${POSTGRESQL_DATABASE}_ro;"
+  psql -c "CREATE ROLE role_${POSTGRESQL_DATABASE}_ro NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
+  psql -c "GRANT CONNECT, TEMPORARY ON DATABASE ${POSTGRESQL_DATABASE} TO role_${POSTGRESQL_DATABASE}_ro;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO role_${POSTGRESQL_DATABASE}_ro;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO role_${POSTGRESQL_DATABASE}_ro;"
 }
 
 function create_rw_database_role () {
   echo "Creating read-write database role role_${POSTGRESQL_DATABASE}_rw"
-  $PSQL -c "CREATE ROLE role_${POSTGRESQL_DATABASE}_rw NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;" 
-  $PSQL -c "GRANT CONNECT, TEMPORARY ON DATABASE ${POSTGRESQL_DATABASE} TO role_${POSTGRESQL_DATABASE}_rw;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, TRIGGER ON TABLES TO role_${POSTGRESQL_DATABASE}_rw;" 
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT, UPDATE, USAGE ON SEQUENCES TO role_${POSTGRESQL_DATABASE}_rw;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO role_${POSTGRESQL_DATABASE}_rw;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT USAGE ON TYPES TO role_${POSTGRESQL_DATABASE}_rw;"
+  psql -c "CREATE ROLE role_${POSTGRESQL_DATABASE}_rw NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;" 
+  psql -c "GRANT CONNECT, TEMPORARY ON DATABASE ${POSTGRESQL_DATABASE} TO role_${POSTGRESQL_DATABASE}_rw;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT INSERT, SELECT, UPDATE, DELETE, TRUNCATE, TRIGGER ON TABLES TO role_${POSTGRESQL_DATABASE}_rw;" 
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT SELECT, UPDATE, USAGE ON SEQUENCES TO role_${POSTGRESQL_DATABASE}_rw;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT EXECUTE ON FUNCTIONS TO role_${POSTGRESQL_DATABASE}_rw;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT USAGE ON TYPES TO role_${POSTGRESQL_DATABASE}_rw;"
 }
 
 function create_ro_schema_role () {
   echo "Creating read-only role role_${SCHEMA}_ro for schema ${SCHEMA}"
-  $PSQL -c "CREATE ROLE role_${SCHEMA}_ro NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
-  $PSQL -c "GRANT CONNECT on DATABASE ${POSTGRESQL_DATABASE} TO role_${SCHEMA}_ro;"
-  $PSQL -c "GRANT USAGE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_ro;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO role_${SCHEMA}_ro;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO role_${SCHEMA}_ro;"
+  psql -c "CREATE ROLE role_${SCHEMA}_ro NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
+  psql -c "GRANT CONNECT on DATABASE ${POSTGRESQL_DATABASE} TO role_${SCHEMA}_ro;"
+  psql -c "GRANT USAGE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_ro;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON TABLES TO role_${SCHEMA}_ro;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT SELECT ON SEQUENCES TO role_${SCHEMA}_ro;"
 }
 
 function create_rw_schema_role () {
   echo "Creating read-write role role_${SCHEMA}_rw for schema ${SCHEMA}"
-  $PSQL -c "CREATE ROLE role_${SCHEMA}_rw NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
-  $PSQL -c "GRANT CONNECT on DATABASE ${POSTGRESQL_DATABASE} TO role_${SCHEMA}_rw;"
-  $PSQL -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;"
-  $PSQL -c "ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO role_${SCHEMA}_rw;"
-  $PSQL -c "GRANT CREATE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;" 
-  $PSQL -c "GRANT USAGE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;" 
+  psql -c "CREATE ROLE role_${SCHEMA}_rw NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
+  psql -c "GRANT CONNECT on DATABASE ${POSTGRESQL_DATABASE} TO role_${SCHEMA}_rw;"
+  psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;"
+  psql -c "ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO role_${SCHEMA}_rw;"
+  psql -c "GRANT CREATE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;" 
+  psql -c "GRANT USAGE ON SCHEMA ${SCHEMA} TO role_${SCHEMA}_rw;" 
 }
 
 function create_user() {
   echo "Creating user $POSTGRESQL_USER"
-  $PSQL -c "CREATE ROLE ${POSTGRESQL_USER} LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
-  $PSQL -c "ALTER ROLE ${POSTGRESQL_USER} WITH PASSWORD '${USER_PASSWORD}';"
+  psql -c "CREATE ROLE ${POSTGRESQL_USER} LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
+  psql -c "ALTER ROLE ${POSTGRESQL_USER} WITH PASSWORD '${USER_PASSWORD}';"
 }
 
 function grant_role_to_user() {
   echo "Granting role $ROLE to user $POSTGRESQL_USER"
-  $PSQL -c "GRANT $ROLE TO ${POSTGRESQL_USER};"
+  psql -c "GRANT $ROLE TO ${POSTGRESQL_USER};"
 }
 
   
 # Database status functions - things like determining which schemas and users are in place
 function list_databases() {
   echo "Listing databases on rds instance $PG_HOST"
-  $PSQL -l
+  psql -l
 }
 
 function list_schemas() {
   echo "Listing schemas on database $POSTGRESQL_DATABASE"
-  $PSQL -c "SELECT nspname from pg_catalog.pg_namespace;"
+  psql -c "SELECT nspname from pg_catalog.pg_namespace;"
 }
 
 function list_users() {
   echo "Listing user definitions on rds instance $PG_HOST"
-  $PSQL -c '\du'
+  psql -c '\du'
 }
