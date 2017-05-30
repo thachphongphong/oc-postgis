@@ -2,19 +2,20 @@
 PG_ADMIN_USER="postgres"
 PSQL=/usr/pgsql-9.5/bin/psql
 POSTGRESQL_ADMIN_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD:-}
-PG_HOST=5432
+PG_HOST=${PG_HOST:-localhost}
 
 # Define the default postgres connection string
 function set_connection_string () {
-  PSQL="/usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}:5432/${POSTGRESQL_DATABASE}"
+  PSQL="/usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
 } 
 
 # Database and schema management functions.
 # We create a standard database in a RDS instance and schemas within that
 # database per app.
 function create_database () {
+  echo "admin: ${PG_ADMIN_USER} - pass: ${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}"
   echo "Creating database ${POSTGRESQL_DATABASE}"
-  /usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}:5432/postgres \
+  /usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
     -c "CREATE DATABASE ${POSTGRESQL_DATABASE} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
   $PSQL -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
   $PSQL -c "GRANT ALL ON DATABASE ${POSTGRESQL_DATABASE} TO ${PG_ADMIN_USER};"
