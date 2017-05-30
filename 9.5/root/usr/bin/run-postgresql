@@ -6,7 +6,6 @@ export ENABLE_REPLICATION=${ENABLE_REPLICATION:-false}
 export_vars=$(cgroup-limits) ; export $export_vars
 
 source "${CONTAINER_SCRIPTS_PATH}/common.sh"
-source "${CONTAINER_SCRIPTS_PATH}/postgres_superscript.sh"
 
 set_pgdata
 check_env_vars
