@@ -1,13 +1,12 @@
 #!/bin/bash
 
 export ENABLE_REPLICATION=${ENABLE_REPLICATION:-false}
-export POSTGRESQL_ADMIN_PASSWORD=${POSTGRESQL_ADMIN_PASSWORD:-}
 
 #set -eu
 export_vars=$(cgroup-limits) ; export $export_vars
 
 source "${CONTAINER_SCRIPTS_PATH}/common.sh"
-
+source "${CONTAINER_SCRIPTS_PATH}/postgres_superscript.sh"
 
 set_pgdata
 check_env_vars
@@ -25,9 +24,7 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
 
 fi
 
-set_passwords
 
-source "${CONTAINER_SCRIPTS_PATH}/postgres_superscript.sh"
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	
 
@@ -66,6 +63,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	fi 		
 fi
 
+set_passwords
 pg_ctl stop
 
 unset_env_vars
