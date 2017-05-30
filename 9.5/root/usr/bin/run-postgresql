@@ -26,14 +26,14 @@ fi
 
 
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
-	if [check_opt_db]; then
+	if check_opt_db $1; then
   		create_database
   	fi
   	create_rw_database_role
   	create_ro_database_role
 
   	SCHEMA=${USER}
-  	if [check_opt_schema]; then
+  	if check_opt_schema $1; then
   		create_schema
   		create_ro_schema_role
   		create_rw_schema_role
@@ -43,7 +43,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
   	fi
 
   	SCHEMA="extensions"
-  	if [check_opt_schema]; then
+  	if check_opt_schema $1; then
   		create_schema
   		create_ro_schema_role
   		create_rw_schema_role
