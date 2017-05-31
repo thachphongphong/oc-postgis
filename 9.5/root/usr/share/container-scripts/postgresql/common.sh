@@ -229,7 +229,7 @@ function wait_for_postgresql_master() {
 
 # Define the default postgres connection string
 function set_connection_string () {
-  PSQL="/usr/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
+  PSQL="/usr/pgsql-9.5/bin/psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
 } 
 
 # Database and schema management functions.
