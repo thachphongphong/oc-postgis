@@ -236,7 +236,7 @@ function set_connection_string () {
 # database per app.
 function create_database () {
   echo "psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres"
-  wait_for_postgresql_master()
+
   psql "postgresql://${PG_ADMIN_USER}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}" \
     -c "CREATE DATABASE ${POSTGRESQL_DATABASE} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
 
