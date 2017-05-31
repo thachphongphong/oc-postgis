@@ -36,9 +36,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	  	create_rw_database_role
 	  	create_ro_database_role
 	fi
-	wait
-
-	psql -c "\c ${POSTGRESQL_DATABASE}"
+	wait	
 
 	SCHEMA=${POSTGRESQL_USER}
 	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
