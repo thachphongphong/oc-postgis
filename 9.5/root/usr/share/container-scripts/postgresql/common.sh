@@ -1,5 +1,6 @@
 PG_HOST=${PG_HOST:-localhost}
 PG_ADMIN_USER="postgres"
+PSQL=/usr/pgsql-9.5/bin/psql
 
 # Configuration settings.
 export POSTGRESQL_MAX_CONNECTIONS=${POSTGRESQL_MAX_CONNECTIONS:-100}
@@ -236,8 +237,9 @@ function set_connection_string () {
 # database per app.
 function create_database () {
   echo "psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres"
-
-  psql "postgresql://${PG_ADMIN_USER}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}" \
+  wait_for_postgresql_master
+  
+  $PSQL "postgresql://postgres:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres" \
     -c "CREATE DATABASE ${POSTGRESQL_DATABASE} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
 
   psql -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
