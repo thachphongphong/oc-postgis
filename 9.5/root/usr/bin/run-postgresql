@@ -23,6 +23,7 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
 
 fi
 
+set_passwords
 
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	
@@ -66,7 +67,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	fi 		
 fi
 
-set_passwords
+
 pg_ctl stop
 
 unset_env_vars

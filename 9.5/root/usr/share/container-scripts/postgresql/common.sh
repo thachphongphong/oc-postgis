@@ -236,7 +236,6 @@ function set_connection_string () {
 # We create a standard database in a RDS instance and schemas within that
 # database per app.
 function create_database () {
-  echo "psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres"
   createdb --owner="$POSTGRESQL_USER" -E UTF8 "$POSTGRESQL_DATABASE"
 
   set_connection_string
