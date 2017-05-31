@@ -38,7 +38,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	  	sleep 1
 	fi
 	
-	psql -c "\connect DBNAME ${POSTGRESQL_DATABASE}"
+	psql -c "\c ${POSTGRESQL_DATABASE}"
 
 	SCHEMA=${POSTGRESQL_USER}
 	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
