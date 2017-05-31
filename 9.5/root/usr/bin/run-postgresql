@@ -35,9 +35,10 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	    create_database
 	  	create_rw_database_role
 	  	create_ro_database_role
-	  	sleep 1
+	  	sleep 5
 	fi
-	
+
+	wait
 	psql -c "\c ${POSTGRESQL_DATABASE}"
 
 	SCHEMA=${POSTGRESQL_USER}
