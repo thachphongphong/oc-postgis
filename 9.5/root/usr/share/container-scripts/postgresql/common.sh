@@ -41,11 +41,11 @@ function usage() {
 
   cat >&2 <<EOF
 You must either specify the following environment variables:
-  POSTGRESQL_USER (regex: 'psql_identifier_regex')
-  POSTGRESQL_PASSWORD (regex: 'psql_password_regex')
-  POSTGRESQL_DATABASE (regex: 'psql_identifier_regex')
+  POSTGRESQL_USER (regex: '$psql_identifier_regex')
+  POSTGRESQL_PASSWORD (regex: '$psql_password_regex')
+  POSTGRESQL_DATABASE (regex: '$psql_identifier_regex')
 Or the following environment variable:
-  POSTGRESQL_ADMIN_PASSWORD (regex: 'psql_password_regex')
+  POSTGRESQL_ADMIN_PASSWORD (regex: '$psql_password_regex')
 Or both.
 Optional settings:
   POSTGRESQL_MAX_CONNECTIONS (default: 100)
@@ -64,16 +64,16 @@ function check_env_vars() {
   if [[ -v POSTGRESQL_USER || -v POSTGRESQL_PASSWORD || -v POSTGRESQL_DATABASE ]]; then
     # one var means all three must be specified
     [[ -v POSTGRESQL_USER && -v POSTGRESQL_PASSWORD && -v POSTGRESQL_DATABASE ]] || usage
-    [[ "$POSTGRESQL_USER"     =~ psql_identifier_regex ]] || usage
-    [[ "$POSTGRESQL_PASSWORD" =~ psql_password_regex   ]] || usage
-    [[ "$POSTGRESQL_DATABASE" =~ psql_identifier_regex ]] || usage
+    [[ "$POSTGRESQL_USER"     =~ $psql_identifier_regex ]] || usage
+    [[ "$POSTGRESQL_PASSWORD" =~ $psql_password_regex   ]] || usage
+    [[ "$POSTGRESQL_DATABASE" =~ $psql_identifier_regex ]] || usage
     [ ${#POSTGRESQL_USER}     -le 63 ] || usage "PostgreSQL username too long (maximum 63 characters)"
     [ ${#POSTGRESQL_DATABASE} -le 63 ] || usage "Database name too long (maximum 63 characters)"
     postinitdb_actions+=",simple_db"
   fi
 
   if [ -v POSTGRESQL_ADMIN_PASSWORD ]; then
-    [[ "$POSTGRESQL_ADMIN_PASSWORD" =~ psql_password_regex ]] || usage
+    [[ "$POSTGRESQL_ADMIN_PASSWORD" =~ $psql_password_regex ]] || usage
     postinitdb_actions+=",admin_pass"
   fi
 
