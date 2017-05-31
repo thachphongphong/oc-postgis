@@ -37,7 +37,8 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	  	create_ro_database_role
 	fi
 	
-	psql "postgresql://${PG_ADMIN_USER}:${POSTGRESQL_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
+	psql "postgresql://${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
+	sleep 1
 
 	SCHEMA=${POSTGRESQL_USER}
 	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
