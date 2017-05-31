@@ -35,10 +35,9 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	    create_database
 	  	create_rw_database_role
 	  	create_ro_database_role
-	  	sleep 5
 	fi
-
 	wait
+
 	psql -c "\c ${POSTGRESQL_DATABASE}"
 
 	SCHEMA=${POSTGRESQL_USER}
@@ -53,17 +52,20 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	  	ROLE="role_${SCHEMA}_rw"
  		grant_role_to_user
 	fi 	
+	wait
 
-#	SCHEMA="extensions"
-#	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
-#	then
-#		 echo "Schema already exists"
-#	else
-#	  	create_schema
-#		create_ro_schema_role
-#		create_rw_schema_role
-#		install_extensions
-#	fi 		
+	SCHEMA="extensions"
+	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
+	then
+		 echo "Schema already exists"
+	else
+	  	create_schema
+		create_ro_schema_role
+		create_rw_schema_role
+
+		wait
+		install_extensions
+	fi 		
 fi
 
 set_passwords
