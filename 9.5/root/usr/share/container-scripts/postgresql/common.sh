@@ -181,6 +181,7 @@ function create_users() {
 }
 
 function set_passwords() {
+  echo "Setting password"
   if [[ ",$postinitdb_actions," = *,simple_db,* ]]; then
     psql --command "ALTER USER \"${POSTGRESQL_USER}\" WITH ENCRYPTED PASSWORD '${POSTGRESQL_PASSWORD}';"
   fi
@@ -191,6 +192,7 @@ function set_passwords() {
   fi
 
   if [ -v POSTGRESQL_ADMIN_PASSWORD ]; then
+    echo "Set password for postgres: ${POSTGRESQL_ADMIN_PASSWORD}"
     psql --command "ALTER USER \"postgres\" WITH ENCRYPTED PASSWORD '${POSTGRESQL_ADMIN_PASSWORD}';"
   fi
 }
@@ -252,7 +254,6 @@ function create_database () {
 
 function create_schema () {
   echo "Creating schema $SCHEMA"
-  echo "$PSQL"
   $PSQL -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA};"
 }
 

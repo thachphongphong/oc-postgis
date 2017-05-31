@@ -25,6 +25,7 @@ fi
 
 set_passwords
 set_connection_string
+echo "$PSQL"
 
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	
@@ -39,7 +40,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	  	create_ro_database_role
 	fi
 	wait	
-	
+
 	SCHEMA=${POSTGRESQL_USER}
 	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
 	then
