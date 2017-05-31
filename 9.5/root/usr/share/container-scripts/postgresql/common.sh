@@ -59,6 +59,8 @@ EOF
 }
 
 function check_env_vars() {
+  echo "Check env vars User ${POSTGRESQL_USER} Pass $POSTGRESQL_PASSWORD Db $POSTGRESQL_DATABASE Mpass $POSTGRESQL_ADMIN_PASSWORD"
+
   if [[ -v POSTGRESQL_USER || -v POSTGRESQL_PASSWORD || -v POSTGRESQL_DATABASE ]]; then
     # one var means all three must be specified
     [[ -v POSTGRESQL_USER && -v POSTGRESQL_PASSWORD && -v POSTGRESQL_DATABASE ]] || usage
@@ -166,11 +168,13 @@ EOF
 
 function create_users() {
   if [[ ",$postinitdb_actions," = *,simple_db,* ]]; then
+    echo "Creating user ${POSTGRESQL_USER} DB $POSTGRESQL_DATABASE"
     createuser "$POSTGRESQL_USER"
     createdb --owner="$POSTGRESQL_USER" "$POSTGRESQL_DATABASE"
   fi
 
   if [ -v POSTGRESQL_MASTER_USER ]; then
+    echo "Creating user ${POSTGRESQL_MASTER_USER}"
     createuser "$POSTGRESQL_MASTER_USER"
   fi
 }
