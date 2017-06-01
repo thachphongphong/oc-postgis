@@ -25,7 +25,6 @@ fi
 
 set_passwords
 
-echo "$PSQL"
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	
 
