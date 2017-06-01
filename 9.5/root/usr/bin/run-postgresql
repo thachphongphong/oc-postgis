@@ -36,14 +36,42 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	else
 	    echo "Database does not exist"
 	    create_database
-	    	    
+	    wait	    
 	    set_connection_string
 	  	create_rw_database_role
 	  	create_ro_database_role
 	fi
 	wait	
 
-		
+	SCHEMA=${POSTGRESQL_USER}
+	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
+	then
+		 echo "Schema already exists"
+	else
+	  	create_schema
+	  	wait
+	  	create_ro_schema_role
+	  	create_rw_schema_role
+
+	  	ROLE="role_${SCHEMA}_rw"
+			grant_role_to_user
+	fi 	
+	wait
+
+	SCHEMA="extensions"
+	if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
+	then
+		 echo "Schema already exists"
+	else
+	  	create_schema
+	  	wait
+	  	
+		create_ro_schema_role
+		create_rw_schema_role
+
+		wait
+		install_extensions
+	fi 	
 fi
 
 
