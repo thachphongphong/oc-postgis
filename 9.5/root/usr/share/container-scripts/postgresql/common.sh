@@ -1,3 +1,5 @@
+#!/bin/sh -e
+
 PG_HOST=${PG_HOST:-localhost}
 PG_ADMIN_USER="postgres"
 

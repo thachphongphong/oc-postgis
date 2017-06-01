@@ -17,7 +17,7 @@ if [ ! -f "$PGDATA/postgresql.conf" ]; then
   NEED_TO_CREATE_USERS=yes
 fi
 
-pg_ctl -w start -o "-h ''"
+pg_ctl -w start -o "-h '*'"
 if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
   create_users
 
