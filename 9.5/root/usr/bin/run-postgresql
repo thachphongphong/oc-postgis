@@ -24,7 +24,8 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
 fi
 
 set_passwords
-set_connection_string
+
+setup_db
 
 pg_ctl stop
 unset_env_vars
