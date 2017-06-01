@@ -26,7 +26,7 @@ fi
 set_passwords
 set_connection_string
 
-pg_ctl stop
+
 
 echo "$PSQL"
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
@@ -46,5 +46,7 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	$PSQL -c "SELECT 1;"
 
 fi
+
+pg_ctl stop
 unset_env_vars
 exec postgres "$@"
