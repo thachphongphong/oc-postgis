@@ -24,6 +24,7 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
 fi
 
 set_passwords
+set_connection_string
 
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	
