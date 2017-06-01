@@ -26,8 +26,6 @@ fi
 set_passwords
 set_connection_string
 
-
-
 pg_ctl stop
 unset_env_vars
 exec postgres "$@"
