@@ -191,7 +191,6 @@ function set_passwords() {
   fi
 
   if [ -v POSTGRESQL_ADMIN_PASSWORD ]; then
-    echo "Set password for postgres: ${POSTGRESQL_ADMIN_PASSWORD}"
     psql --command "ALTER USER \"postgres\" WITH ENCRYPTED PASSWORD '${POSTGRESQL_ADMIN_PASSWORD}';"
   fi
 }
@@ -234,7 +233,7 @@ function set_connection_string () {
 # database per app.
 function create_database () {
   echo "Creating database ${POSTGRESQL_DATABASE}"
-  createdb --owner="$POSTGRESQL_USER" -E UTF8 "$POSTGRESQL_DATABASE"
+  createdb --owner="$PG_ADMIN_USER" -E UTF8 "$POSTGRESQL_DATABASE"
 
   $PSQL -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
   $PSQL -c "GRANT ALL ON DATABASE ${POSTGRESQL_DATABASE} TO ${PG_ADMIN_USER};"
