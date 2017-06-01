@@ -1,5 +1,6 @@
 PG_HOST=${PG_HOST:-localhost}
 PG_ADMIN_USER="postgres"
+PSQL=/usr/pgsql-9.5/bin/psql
 
 # Configuration settings.
 export POSTGRESQL_MAX_CONNECTIONS=${POSTGRESQL_MAX_CONNECTIONS:-100}
@@ -230,7 +231,7 @@ function wait_for_postgresql_master() {
 
 # Define the default postgres connection string
 function set_connection_string () {
-  PSQL="psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
+  PSQL="$PSQL postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/${POSTGRESQL_DATABASE}"
 } 
 
 # Database and schema management functions.
