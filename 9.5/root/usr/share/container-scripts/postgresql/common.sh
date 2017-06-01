@@ -232,7 +232,7 @@ function set_connection_string () {
 # database per app.
 function create_database () {
   echo "Creating database ${POSTGRESQL_DATABASE}"
-  psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
+  psql "postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres" \
     -c "CREATE DATABASE ${POSTGRESQL_DATABASE} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
 
   $PSQL -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
