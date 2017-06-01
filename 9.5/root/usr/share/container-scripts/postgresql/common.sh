@@ -333,3 +333,49 @@ function list_users() {
   echo "Listing user definitions on rds instance $PG_HOST"
   $PSQL -c '\du'
 }
+
+
+functions setup_db() {
+  if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
+    
+    if [ "$( psql -tAc "SELECT 1 FROM pg_database WHERE datname='${POSTGRESQL_DATABASE}'" )" = 1 ]
+    then
+        echo "Database already exists"
+    else
+        echo "Database does not exist"
+        create_database    
+        
+        create_rw_database_role
+        create_ro_database_role
+    fi
+    wait_for_postgresql_master
+    
+    SCHEMA=${POSTGRESQL_USER}
+    if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
+    then
+       echo "Schema already exists"
+    else
+        create_schema
+        create_ro_schema_role
+        create_rw_schema_role
+
+        ROLE="role_${SCHEMA}_rw"
+      grant_role_to_user
+    fi  
+    wait
+
+    SCHEMA="extensions"
+    if [ "$( psql -tAc "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '${SCHEMA}'" )" = ${SCHEMA} ]
+    then
+       echo "Schema already exists"
+    else
+        create_schema
+      create_ro_schema_role
+      create_rw_schema_role
+
+      wait
+      install_extensions
+    fi  
+
+  fi
+}
