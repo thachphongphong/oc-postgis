@@ -42,9 +42,9 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	  	create_rw_database_role
 	  	create_ro_database_role
 	fi
-	wait_for_postgresql_master()
+	wait_for_postgresql_master
 	$PSQL -c "SELECT 1;"
-	
+
 fi
 unset_env_vars
 exec postgres "$@"
