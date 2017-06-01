@@ -218,13 +218,9 @@ function set_pgdata ()
 
 function wait_for_postgresql_master() {
   while true; do
-    master_fqdn=$(postgresql_master_addr)
-    echo "Waiting for PostgreSQL master (${master_fqdn}) to accept connections ..."
-    if [ -v POSTGRESQL_ADMIN_PASSWORD ]; then
-      PGPASSWORD=${POSTGRESQL_ADMIN_PASSWORD} psql "postgresql://postgres@${master_fqdn}" -c "SELECT 1;" && return 0
-    else
-      PGPASSWORD=${POSTGRESQL_PASSWORD} psql "postgresql://${POSTGRESQL_USER}@${master_fqdn}/${POSTGRESQL_DATABASE}" -c "SELECT 1;" && return 0
-    fi
+    echo "Waiting for PostgreSQL master (${PSQL}) to accept connections ..."
+    set_connection_string
+    $PSQL -c "SELECT 1;" && return 0
     sleep 1
   done
 }

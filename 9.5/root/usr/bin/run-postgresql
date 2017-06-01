@@ -24,9 +24,6 @@ if [ "${NEED_TO_CREATE_USERS:-}" == "yes" ]; then
 fi
 
 set_passwords
-set_connection_string
-
-
 
 echo "$PSQL"
 if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
@@ -38,12 +35,11 @@ if [ "${NEED_TO_CREATE_POSTGIS:-}" == "yes" ]; then
 	else
 	    echo "Database does not exist"
 	    create_database    
-	    set_connection_string
+	    
 	  	create_rw_database_role
 	  	create_ro_database_role
 	fi
 	wait_for_postgresql_master
-	$PSQL -c "SELECT 1;"
 
 fi
 
