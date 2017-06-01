@@ -217,7 +217,6 @@ function set_pgdata ()
 function wait_for_postgresql_master() {
   while true; do
     echo "Waiting for PostgreSQL master (${PSQL}) to accept connections ..."
-    set_connection_string
     $PSQL -c "SELECT 1;" && return 0
     sleep 1
   done
@@ -233,7 +232,8 @@ function set_connection_string () {
 # database per app.
 function create_database () {
   echo "Creating database ${POSTGRESQL_DATABASE}"
-  createdb --owner="$PG_ADMIN_USER" -E UTF8 "$POSTGRESQL_DATABASE"
+  psql postgresql://${PG_ADMIN_USER}:${POSTGRESQL_ADMIN_PASSWORD}@${PG_HOST}:5432/postgres \
+    -c "CREATE DATABASE ${DB_NAME} WITH OWNER = ${PG_ADMIN_USER} ENCODING = 'UTF8' CONNECTION LIMIT = -1;"
 
   $PSQL -c "ALTER DATABASE ${POSTGRESQL_DATABASE} SET search_path TO \"\$user\",public,extensions;"
   $PSQL -c "GRANT ALL ON DATABASE ${POSTGRESQL_DATABASE} TO ${PG_ADMIN_USER};"
