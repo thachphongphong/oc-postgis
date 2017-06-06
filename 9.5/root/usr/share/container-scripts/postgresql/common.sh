@@ -61,7 +61,7 @@ EOF
 }
 
 function check_env_vars() {
-  echo "Check env vars User ${POSTGRESQL_USER} Pass $POSTGRESQL_PASSWORD Db $POSTGRESQL_DATABASE Mpass $POSTGRESQL_ADMIN_PASSWORD"
+  echo "Check env vars User ${POSTGRESQL_USER} Pass $POSTGRESQL_PASSWORD Db $POSTGRESQL_DATABASE"
 
   if [[ -v POSTGRESQL_USER || -v POSTGRESQL_PASSWORD || -v POSTGRESQL_DATABASE ]]; then
     # one var means all three must be specified
